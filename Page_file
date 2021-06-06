@@ -1,0 +1,100 @@
+<apex:page docType="html-5.0" controller="AppointmentTableWithController" showHeader="false" sidebar="false">
+<apex:form >
+<apex:pageBlock title="Appointmets Table">
+
+
+<!-- Selection a doctor --> 
+<apex:pageBlockSection id="selected_doctor">
+<apex:selectList size="1" value="{!selectedDoctor}">
+    <apex:outputText >Select a doctor:</apex:outputText>
+<apex:selectOptions value="{!doctorSelectOptionList}"/>
+</apex:selectList>
+</apex:pageBlockSection>
+    
+    
+
+    
+<!-- Add new doctor button -->
+ <apex:pageBlockSection >
+ <apex:commandLink target="_blank" styleClass="btn"
+                   style="text-decoration:none; padding:4px; float:left"
+                   action="{!URLFOR($Action.Doctor__c.New)}"
+                    value="Add New Doctor" />
+</apex:pageBlockSection>
+
+    
+<!-- Working Hours Start -->
+<apex:pageBlockSection >
+<apex:outputText >Working Hours Start:</apex:outputText>
+<!--<apex:outputField label="Working Hours Start:" value="{!selectedDoctor}" style="float:left"/>-->
+</apex:pageBlockSection>
+
+<!-- Working Hours End -->
+<apex:pageBlockSection >
+<apex:outputText >Working Hours End:</apex:outputText>
+<!--<apex:outputField label="Working Hours End:" value="{!selectedDoctor}" style="float:left"/>-->
+</apex:pageBlockSection>
+
+<!-- Selection a patient -->
+<apex:pageBlockSection >
+<apex:selectList size="1">
+<apex:outputText >Select a patient:</apex:outputText>
+<apex:selectOptions value="{!patientSelectOptionList}"/>
+</apex:selectList>
+</apex:pageBlockSection>
+    
+<!-- Add new patient button -->
+ <apex:pageBlockSection >
+ <apex:commandLink target="_blank" styleClass="btn"
+                   style="text-decoration:none; padding:4px; float:left"
+                   action="{!URLFOR($Action.Patient__c.New)}"
+                    value="Add New Patient" />
+</apex:pageBlockSection>
+
+<!-- Appointment date -->
+<apex:pageBlockSection >
+<apex:inputField label="Appointment date" 
+value="{!appt.Appointment_Date__c}"
+required="false"/>
+</apex:pageBlockSection>
+
+<!-- Duration -->
+<apex:pageBlockSection >
+<apex:inputField label="Duration in minutes" value="{!appt.Duration_in_minutes__c}"
+                 required="false"/>
+</apex:pageBlockSection>
+            
+
+<!-- Add new appointment button -->
+<apex:pageBlockSection >
+<apex:commandButton immediate="false" reRender="app_list3" action="{!addNewAppt}"
+                    value="Add New Appointment" />
+</apex:pageBlockSection>
+    
+<!--Appointments Table-->
+   
+            <apex:pageBlockTable value="{! Appointments }" var="ct" id="thisTable">
+                <apex:column headerValue="Action">
+					<apex:outputLink value="{!URLFOR('/' + ct.Id)}">
+									View
+					</apex:outputLink>
+				</apex:column>
+                <apex:column value="{! ct.Doctor__c }"/>
+                <apex:column value="{! ct.Patient__c }"/>
+                <apex:column value="{! ct.Appointment_Date__c }"/>
+                <apex:column value="{! ct.Duration_in_minutes__c }"/>
+                    
+            </apex:pageBlockTable>                    
+       
+<!-- Pagination  -->
+            <div align="left" id="button">
+                <apex:commandButton action="{! setList.previous }" value=" Previous " disabled="{!!setList.HasPrevious}" reRender="thisBlock,button"
+                />
+               <apex:outputLabel value="Page {! PageNumber } of {! TotalPages }" />
+                
+                <apex:commandButton action="{! setList.next }" value=" Next > " disabled="{!!setList.HasNext}" reRender="thisBlock,button"
+                />
+            </div>
+</apex:pageBlock>
+    </apex:form>
+</apex:page>

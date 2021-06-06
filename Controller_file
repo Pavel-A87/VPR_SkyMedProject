@@ -1,0 +1,100 @@
+public class AppointmentTableWithController {
+ 	public Appointment__c appt {get; set;}
+	public Integer duration {get; set;}   
+    public Datetime appDate {get; set;}
+    
+    public String selectedDoctor {get; set;}
+    public List<Doctor__c> DoctorList {get;set;}
+    public List<SelectOption> doctorSelectOptionList {get;set;}
+    
+    public String selectedPatient {get; set;}
+    public List<Patient__c> PatientList {get;set;}
+    public List<SelectOption> patientSelectOptionList {get;set;} 
+    
+    
+ 
+    
+    public PageReference addNewAppt() {
+     					return null;
+							}
+   
+ 
+    public AppointmentTableWithController() {
+        this.appt = new Appointment__c();
+        this.selectedDoctor = '';
+        this.selectedPatient = '';
+        this.appDate = System.now();
+      //  this.duration = 20;
+        
+        
+            
+       doctorSelectOptionList = new List<SelectOption>();
+       patientSelectOptionList = new List<SelectOption>();
+     
+        
+
+        DoctorList = [SELECT iD, Name, Working_Hours_Start__c, Working_Hours_End__c FROM Doctor__c];
+        for (Doctor__c doc : DoctorList){ 
+            doctorSelectOptionList.add(new SelectOption(doc.Id, doc.Name)); 
+        }
+             
+        PatientList = [SELECT Id, Name FROM Patient__c];
+        for (Patient__c patient : PatientList){
+            patientSelectOptionList.add(new SelectOption(patient.Id, patient.Name)); 
+        }
+    }
+    
+   
+public String sortingColumn = 'Name'; 
+ 
+ 
+ 
+public String query = 'SELECT Id, Name, Doctor__c, Patient__c, Appointment_Date__c, Duration_in_minutes__c ' +
+                      'FROM Appointment__c ' +
+                      'ORDER BY ' + sortingColumn;
+ 
+
+ 
+// Start Pagination
+
+public ApexPages.StandardSetController setList {
+	get {
+		if (setList == null) { 
+			setList = new ApexPages.StandardSetController(Database.query(query));
+		}
+		if (this.PageSize == null) PageSize = 20; 
+		setList.setPageSize(PageSize); 
+		return setList;
+	} set;
+}
+public Integer PageSize {
+	get; set { 
+		if(value != null) this.PageSize = value;
+	}
+}
+public Integer PageNumber {
+	get { 
+		this.PageNumber = setList.getPageNumber();
+		return this.PageNumber;
+	}
+	set { 
+		setList.setPageNumber(value); //
+	}
+}
+public Integer TotalPages { 
+	get {
+		if (setList.getResultSize() <= 10)
+			this.TotalPages = 1;
+		if (Math.Mod ( setList.getResultSize(),setList.getPageSize() ) == 0)
+			this.TotalPages = ( setList.getResultSize()/setList.getPageSize() );
+		else this.TotalPages = ( setList.getResultSize()/setList.getPageSize() )+1;
+		return totalpages;
+	}
+	set;
+}
+public List<Appointment__c> getAppointments() {
+	return (List<Appointment__c>) setList.getRecords();
+}
+// End Pagination
+ 
+    }
